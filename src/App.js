@@ -82,12 +82,27 @@ class App extends React.Component {
   constructor(){
     super();
     this.state = {
-
+      input: ''
     }
   }
 
   componentDidMount() {
-    console.log('testing');
+    console.log('mounted');
+  }
+
+  onInputChange = (e) => {
+    this.setState({input: e.target.value});
+  }
+
+  onButtonSubmit = () => {
+    fetch(`https://api.edamam.com/api/nutrition-data?app_id=${edamamId}&app_key=${APIKey}&ingr=${this.state.input}`)
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
+  }
+
+  onButtonReset = () => {
+    this.setState({input: ''});
   }
 
   render () {
@@ -100,7 +115,11 @@ class App extends React.Component {
       <NavigationBar />
       <h1 className='p-3 m-3'>Nutrition Value Calculator</h1>
       <h4 className='p-3 m-3'>Insert the ingredients of your meal, you can use measures, number of items, cups, spoons, etc</h4>
-      <IngredientsInput />
+      <IngredientsInput 
+        onInputChange={this.onInputChange} 
+        onButtonSubmit={this.onButtonSubmit}
+        onButtonReset={this.onButtonReset}
+      />
     </div>
   );
   }
