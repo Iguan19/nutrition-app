@@ -1,24 +1,19 @@
-import React from 'react'
-import { Button, Label, Input, Container, Row, Col } from 'reactstrap'
+import React from 'react';
+import { Button, Label, Input, Container, Row, Col } from 'reactstrap';
 
-const IngredientsInput = ({ onInputChange, onButtonSubmit, onButtonReset }) => {
+const IngredientsInput = ({ onInputChange, onButtonSubmit }) => {
     return (
         <Container>
             <Row className='p-3 m-3'>
                 <Col>
-                    <Label for="ingredients">Ingredients</Label>
+                    <Label for="ingredients">Ingredients, one per line</Label>
                     <Input onChange={onInputChange} className='h-250' type="textarea" name="ingredients" id="ingredients" />
-                </Col>
-                <Col>
-                    <h1>Output</h1>
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <Button onClick={onButtonSubmit} className='m-3' color="primary">Analize</Button>
-                    <Button onClick={onButtonReset} className='m-3' color="secondary">Reset</Button>
                 </Col>
-                <Col></Col>
             </Row>
         </Container>
     )

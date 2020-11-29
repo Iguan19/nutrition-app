@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
 import './App.css';
+import { Row, Col } from 'reactstrap';
 
 import Particles from 'react-particles-js';
 
 import NavigationBar from './components/navigation-bar/navigation-bar.component';
-import IngredientsInput from './components/ingredients-input/ingredients-input.component'
+import IngredientsInput from './components/ingredients-input/ingredients-input.component';
+import OutputTable from './components/output-table/output-table.component';
 
 
 const APIKey = process.env.REACT_APP_EDAMAM_API_KEY;
@@ -82,7 +84,8 @@ class App extends React.Component {
   constructor(){
     super();
     this.state = {
-      input: ''
+      input: '',
+      response: []
     }
   }
 
@@ -90,19 +93,28 @@ class App extends React.Component {
     console.log('mounted');
   }
 
+  saveResponse = (data) => {
+    this.setState({response: this.state.response.concat(data)})
+  }
+
   onInputChange = (e) => {
     this.setState({input: e.target.value});
   }
 
   onButtonSubmit = () => {
-    fetch(`https://api.edamam.com/api/nutrition-data?app_id=${edamamId}&app_key=${APIKey}&ingr=${this.state.input}`)
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(err => console.log(err))
-  }
-
-  onButtonReset = () => {
-    this.setState({input: ''});
+    this.setState({response: []});
+    let ingredientsArray = this.state.input.split("\n")
+    console.log(ingredientsArray);
+    for(let ing of ingredientsArray){
+      fetch(`https://api.edamam.com/api/nutrition-data?app_id=${edamamId}&app_key=${APIKey}&ingr=${ing}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        this.saveResponse(data)
+      })
+      .catch(err => console.log(err))
+    }
+    console.log(this.state.response);
   }
 
   render () {
@@ -111,15 +123,22 @@ class App extends React.Component {
       <Particles
       className="particles"
       params={params}
-    />
+      />
+
       <NavigationBar />
       <h1 className='p-3 m-3'>Nutrition Value Calculator</h1>
       <h4 className='p-3 m-3'>Insert the ingredients of your meal, you can use measures, number of items, cups, spoons, etc</h4>
-      <IngredientsInput 
-        onInputChange={this.onInputChange} 
-        onButtonSubmit={this.onButtonSubmit}
-        onButtonReset={this.onButtonReset}
-      />
+      <Row>
+        <Col>
+          <IngredientsInput 
+            onInputChange={this.onInputChange} 
+            onButtonSubmit={this.onButtonSubmit}
+          />
+        </Col>
+        <Col>
+          <OutputTable data={this.state.response} />
+        </Col>
+      </Row>
     </div>
   );
   }
